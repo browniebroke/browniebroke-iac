@@ -39,7 +39,7 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
       - run: terraform -chdir=${{ matrix.directory }} init
         id: init
-      - run: terraform -chdir=${{ matrix.directory }} -var github_token=${{ secrets.GH_PAT }} plan -no-color -input=false
+      - run: terraform -chdir=${{ matrix.directory }} plan -var github_token=${{ secrets.GH_PAT }} -no-color -input=false
         id: plan
 
       - name: Comment plan in pull request
@@ -81,4 +81,4 @@ jobs:
           aws-region: us-east-2
       - uses: hashicorp/setup-terraform@v2
       - run: terraform -chdir=${{ matrix.directory }} init
-      - run: terraform -chdir=${{ matrix.directory }} -var github_token=${{ secrets.GH_PAT }} apply -auto-approve -input=false
+      - run: terraform -chdir=${{ matrix.directory }} apply -var github_token=${{ secrets.GH_PAT }} -auto-approve -input=false
