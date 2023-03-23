@@ -27,10 +27,8 @@ jobs:
     strategy:
       matrix:
         directory:
-          - name: "bootstrap/aws"
-            tf_args: ""
-          - name: "github"
-            tf_args: -var token=${{ secrets.GH_PAT }}
+          - "bootstrap/aws"
+          - "github"
     steps:
       - uses: actions/checkout@v3
       - uses: aws-actions/configure-aws-credentials@v2
@@ -39,9 +37,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
       - uses: hashicorp/setup-terraform@v2
-      - run: terraform -chdir=${{ matrix.directory.name }} init
+      - run: terraform -chdir=${{ matrix.directory }} init
         id: init
-      - run: terraform -chdir=${{ matrix.directory.name }} ${{ matrix.directory.tf_args }} plan -no-color -input=false
+      - run: terraform -chdir=${{ matrix.directory }} -var github_token=${{ secrets.GH_PAT }} plan -no-color -input=false
         id: plan
 
       - name: Comment plan in pull request
@@ -68,10 +66,8 @@ jobs:
     strategy:
       matrix:
         directory:
-          - name: "bootstrap/aws"
-            tf_args: ""
-          - name: "github"
-            tf_args: -var token=${{ secrets.GH_PAT }}
+          - "bootstrap/aws"
+          - "github"
     needs:
       - lint
       - plan
@@ -84,5 +80,5 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
       - uses: hashicorp/setup-terraform@v2
-      - run: terraform -chdir=${{ matrix.directory.name }} init
-      - run: terraform -chdir=${{ matrix.directory.name }} ${{ matrix.directory.tf_args }} apply -auto-approve -input=false
+      - run: terraform -chdir=${{ matrix.directory }} init
+      - run: terraform -chdir=${{ matrix.directory }} -var github_token=${{ secrets.GH_PAT }} apply -auto-approve -input=false
