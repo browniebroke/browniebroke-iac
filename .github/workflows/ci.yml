@@ -10,6 +10,9 @@ concurrency:
   group: ${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
+env:
+  TF_VAR_github_token: ${{ secrets.GH_PAT }}
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -28,6 +31,7 @@ jobs:
       matrix:
         directory:
           - "bootstrap/aws"
+          - "github"
     steps:
       - uses: actions/checkout@v3
       - uses: aws-actions/configure-aws-credentials@v2
@@ -46,8 +50,9 @@ jobs:
         if: github.event_name == 'pull_request'
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          comment_tag: tfplan
+          comment_tag: ${{ matrix.directory }}
           message: |
+            #### Directory: ${{ matrix.directory }}
             #### Terraform Initialization ⚙️`${{ steps.init.outcome }}`
             #### Terraform Plan 📖`${{ steps.plan.outcome }}`
 
@@ -65,6 +70,7 @@ jobs:
       matrix:
         directory:
           - "bootstrap/aws"
+          - "github"
     needs:
       - lint
       - plan
