@@ -50,7 +50,7 @@ jobs:
         if: github.event_name == 'pull_request'
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          comment_tag: ${{ matrix.directory.name }}
+          comment_tag: ${{ matrix.directory }}
           message: |
             #### Directory: ${{ matrix.directory }}
             #### Terraform Initialization ⚙️`${{ steps.init.outcome }}`
