@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  TF_VAR_GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+  TF_VAR_github_token: ${{ secrets.GH_PAT }}
 
 jobs:
   lint:
