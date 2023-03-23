@@ -27,7 +27,10 @@ jobs:
     strategy:
       matrix:
         directory:
-          - "bootstrap/aws"
+          - name: "bootstrap/aws"
+            tf_args: ""
+          - name: "github"
+            tf_args: "-var 'token=${{ secrets.GH_PAT }}'"
     steps:
       - uses: actions/checkout@v3
       - uses: aws-actions/configure-aws-credentials@v2
@@ -36,9 +39,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
       - uses: hashicorp/setup-terraform@v2
-      - run: terraform -chdir=${{ matrix.directory }} init
+      - run: terraform -chdir=${{ matrix.directory.name }} init
         id: init
-      - run: terraform -chdir=${{ matrix.directory }} plan -no-color -input=false
+      - run: terraform -chdir=${{ matrix.directory.name }} ${{ matrix.directory.tf_args }} plan -no-color -input=false
         id: plan
 
       - name: Comment plan in pull request
@@ -46,8 +49,9 @@ jobs:
         if: github.event_name == 'pull_request'
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          comment_tag: tfplan
+          comment_tag: ${{ matrix.directory.name }}
           message: |
+            #### Directory: ${{ matrix.directory.name }}
             #### Terraform Initialization ⚙️`${{ steps.init.outcome }}`
             #### Terraform Plan 📖`${{ steps.plan.outcome }}`
 
@@ -64,7 +68,10 @@ jobs:
     strategy:
       matrix:
         directory:
-          - "bootstrap/aws"
+          - name: "bootstrap/aws"
+            tf_args: ""
+          - name: "github"
+            tf_args: "-var 'token=${{ secrets.GH_PAT }}'"
     needs:
       - lint
       - plan
@@ -77,5 +84,5 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
       - uses: hashicorp/setup-terraform@v2
-      - run: terraform -chdir=${{ matrix.directory }} init
-      - run: terraform -chdir=${{ matrix.directory }} apply -auto-approve -input=false
+      - run: terraform -chdir=${{ matrix.directory.name }} init
+      - run: terraform -chdir=${{ matrix.directory.name }} ${{ matrix.directory.tf_args }} apply -auto-approve -input=false
