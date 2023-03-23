@@ -30,7 +30,7 @@ jobs:
           - name: "bootstrap/aws"
             tf_args: ""
           - name: "github"
-            tf_args: "-var 'token=${{ secrets.GH_PAT }}'"
+            tf_args: -var token=${{ secrets.GH_PAT }}
     steps:
       - uses: actions/checkout@v3
       - uses: aws-actions/configure-aws-credentials@v2
@@ -71,7 +71,7 @@ jobs:
           - name: "bootstrap/aws"
             tf_args: ""
           - name: "github"
-            tf_args: "-var 'token=${{ secrets.GH_PAT }}'"
+            tf_args: -var token=${{ secrets.GH_PAT }}
     needs:
       - lint
       - plan
