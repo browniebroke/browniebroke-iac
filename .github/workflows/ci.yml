@@ -10,6 +10,9 @@ concurrency:
   group: ${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
+env:
+  TF_VAR_GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -39,7 +42,7 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
       - run: terraform -chdir=${{ matrix.directory }} init
         id: init
-      - run: terraform -chdir=${{ matrix.directory }} plan -var github_token=${{ secrets.GH_PAT }} -no-color -input=false
+      - run: terraform -chdir=${{ matrix.directory }} plan -no-color -input=false
         id: plan
 
       - name: Comment plan in pull request
@@ -49,7 +52,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           comment_tag: ${{ matrix.directory.name }}
           message: |
-            #### Directory: ${{ matrix.directory.name }}
+            #### Directory: ${{ matrix.directory }}
             #### Terraform Initialization ⚙️`${{ steps.init.outcome }}`
             #### Terraform Plan 📖`${{ steps.plan.outcome }}`
 
@@ -81,4 +84,4 @@ jobs:
           aws-region: us-east-2
       - uses: hashicorp/setup-terraform@v2
       - run: terraform -chdir=${{ matrix.directory }} init
-      - run: terraform -chdir=${{ matrix.directory }} apply -var github_token=${{ secrets.GH_PAT }} -auto-approve -input=false
+      - run: terraform -chdir=${{ matrix.directory }} apply -auto-approve -input=false
