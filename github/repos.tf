@@ -14,6 +14,13 @@ locals {
       homepage_url    = "https://browniebroke.com"
       has_discussions = false
     }
+    gatsby_img_gallery = {
+      name            = "gatsby-image-gallery"
+      topics          = ["gallery", "lightbox", "gatsby", "gatsbyjs"]
+      description     = "Very basic gallery grid based on gatsby-image"
+      homepage_url    = "https://gatsby-image-gallery.netlify.app"
+      has_discussions = null
+    }
   }
 }
 
